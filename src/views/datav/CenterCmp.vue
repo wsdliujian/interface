@@ -1,8 +1,8 @@
 <template>
-  <div style="height: 960px">
-<!--    <a-button class="editable-add-btn" @click="handleAdd">
-      Add
-    </a-button>-->
+  <div style="height: 960px" @mouseover="handleFocus" @mouseleave="handleBlur">
+    <a-button class="editable-add-btn" type="danger" v-show="isShow" @click="closeWin">
+      返回应用商店
+    </a-button>
     <a-table bordered :data-source="dataSource" :columns="columns">
       <template slot="describe" slot-scope="text, record">
         <editable-cell :text="text" @change="onCellChange(record.key, 'name', $event)" />
@@ -57,15 +57,16 @@
   </div>
 </template>
 <script>
+import test from '../js/socket'
 const EditableCell = {
   template: `
     <div class="editable-cell">
-    <div v-if="editable" class="editable-cell-input-wrapper">
-      <a-input :value="value" @change="handleChange" @pressEnter="check" /><a-icon
-        type="check"
-        class="editable-cell-icon-check"
-        @click="check"
-    />
+        <div v-if="editable" class="editable-cell-input-wrapper">
+          <a-input :value="value" @change="handleChange" @pressEnter="check" /><a-icon
+            type="check"
+            class="editable-cell-icon-check"
+            @click="check"
+        />
     </div>
     <div v-else class="editable-cell-text-wrapper">
       {{ value || ' ' }}
@@ -102,6 +103,8 @@ export default {
   },
   data() {
     return {
+      isShow: false,
+      isYC: true,
       dataSource: [
         {
           key: '0',
@@ -404,11 +407,40 @@ export default {
         //myself.dataSource = dataSource;
       },2000)
     },
+    initData(obj) {
+      console.log("AAABBB");
+      console.log(obj.sudu);
+    },
+    handleFocus() {
+      let myself = this;
+      this.isYC = false;
+      setTimeout(function(){
+        if(!myself.isYC) {
+          myself.isShow = true;
+        }
+      },1500)
+    },
+    handleBlur() {
+      let myself = this;
+      this.isYC = true;
+      setTimeout(function(){
+        if(myself.isYC) {
+          myself.isShow = false;
+        }
+      },1000)
+    },
+    closeWin() {
+      window.close();
+    }
   },
   mounted() {
     this.$nextTick(() => {
       //实时获取数据内容
       this.getDataInfo();
+      //实时获取数据内容
+      test.initSocket();
+      //回调函数放到window里
+      window.updateData = this.initData;
     })
   },
 };
@@ -454,5 +486,6 @@ export default {
 
 .editable-add-btn {
   margin-bottom: 8px;
+  margin-left: 1300px;
 }
 </style>
