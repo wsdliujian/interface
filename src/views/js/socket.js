@@ -12,7 +12,7 @@ let socketObj =  {
             twoFish:false,
             fishTitle: "铁鱼信息采集",
             linkTitle: "二回路",
-            linkUrl:"ws://219.140.94.192:30890/imserver/1001"
+            linkUrl:"ws://192.168.0.102:9002"
         },
         searchVal: '',
         linkBreak:false,
