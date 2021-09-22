@@ -1,5 +1,5 @@
 {
-  "name": "my-vue-proj",
+  "name": "interface",
   "version": "0.1.0",
   "author": "liujian <212839876@qq.com>",
   "license": null,
@@ -7,13 +7,13 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "lint": "vue-cli-service lint",
-    "build-icon": "electron-icon-builder --input=./public/icon.jpg --output=build --flatten",
+    "build-icon": "electron-icon-builder --input=./public/icon.png --output=build --flatten",
     "electron:build": "vue-cli-service electron:build",
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
-    "build": "electron-packager . my-vue-proj --platform linux --arch x64 --out dist/",
-    "deb64": "electron-installer-debian --src dist/my-vue-proj-linux-x64/ --dest dist/installers/ --arch amd64"
+    "build": "electron-packager . interface --platform linux --arch x64 --out dist/",
+    "deb64": "electron-installer-debian --src dist/interface-linux-x64/ --dest dist/installers/ --arch amd64"
   },
   "main": "background.js",
   "dependencies": {
@@ -41,6 +41,9 @@
     "less-loader": "^7.3.0",
     "vue-cli-plugin-electron-builder": "~2.1.1",
     "vue-template-compiler": "^2.6.11"
+  },
+  "postinstall": {
+
   },
   "eslintConfig": {
     "root": true,

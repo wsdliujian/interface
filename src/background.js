@@ -13,8 +13,8 @@ protocol.registerSchemesAsPrivileged([
 async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    width: 960,
+    height: 540,
     //去掉标题
     //frame:false,
     //默认占满全屏
@@ -22,8 +22,11 @@ async function createWindow() {
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
-      contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION
+     /* nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
+      contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION*/
+      nodeIntegration: true,
+      contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
+      webSecurity:false
     }
   })
 

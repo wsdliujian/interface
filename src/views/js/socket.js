@@ -12,7 +12,7 @@ let socketObj =  {
             twoFish:false,
             fishTitle: "铁鱼信息采集",
             linkTitle: "二回路",
-            linkUrl:"ws://192.168.0.102:9002"
+            linkUrl:"ws://192.168.0.55:9002"
         },
         searchVal: '',
         linkBreak:false,
@@ -74,6 +74,7 @@ let socketObj =  {
                 socket.onmessage = function (evt) {
                     myself.data.heartCheck.reset().start();
                     console.log('收到消息');
+                    console.log(evt.data);
                     myself.data.linkBreak = false;
                     myself.data.linkConnect = false;
                     myself.data.linkSuccess = true;
@@ -118,8 +119,10 @@ let socketObj =  {
             }
         },
         initData(jsonStr) {
-            let obj = JSON.parse(JSON.parse(jsonStr));
-            window.updateData(obj);
+            if (JSON.parse(jsonStr)) {
+                let obj = JSON.parse(jsonStr);
+                window.updateData(obj);
+            }
         },
         linkResetFish() {
             if (this.nowData.oneFish) {
