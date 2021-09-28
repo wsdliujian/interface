@@ -1,7 +1,12 @@
 <template>
   <div style="height: 860px">
-    <a-row style="min-height: 0.9rem; font-size: 0.4rem;margin-bottom: 8px">
+    <a-row style="min-height: 0.9rem; font-size: 0.4rem;">
       <a-col :span="1">
+        <a-button type="primary" class="editable-add-btn" @click="refreshData()">
+          刷新
+        </a-button>
+      </a-col>
+      <a-col :span="2">
         <div title="返回应用商店" class="close" @click="closeWin"/>
       </a-col>
     </a-row>
@@ -18,7 +23,7 @@
   </div>
 </template>
 <script>
-/*import socket from '../js/socket'*/
+import socket from '../js/socket'
 import {getUserIP} from '../js/ip'
 export default {
   data() {
@@ -50,7 +55,7 @@ export default {
         }
       },
       columns: [
-        {
+       /* {
           title: '序号',
           customRender: (text,record,index) =>
               `${(this.paginationOpt.current -1) *
@@ -58,11 +63,11 @@ export default {
               }`,
           align: 'center',
           width: 80,
-        },
+        },*/
         {
           title: '硬件端口号',
           dataIndex: 'port',
-          width: 100,
+          width: 120,
         },
         {
           title: '设备',
@@ -120,6 +125,48 @@ export default {
       this.params = "?ip="+this.localhostIp
       this.axiosGet(url,"find");
     },
+    refreshData() {
+      socket.close();
+      this.params = "?ip="+this.localhostIp
+      this.axiosGet(this.$url + "/MEClass/findEquipmentList","refresh");
+    },
+    socketData(data) {
+      let newData = JSON.parse(data);
+      //console.log(newData)
+      let port = newData['port'];
+      let oldData = this.dataSource;
+      for (let i = 0 ,length=oldData.length;i<length;i++) {
+        let gatherDataPort = oldData[i]['gatherDataPort'];
+        if (gatherDataPort == port) {
+          oldData[i]['dataInfo'] = data;
+          break;
+        }
+        let normDataPort = oldData[i]['normDataPort'];
+        if(normDataPort == port) {
+          oldData[i]['outDataSite'] = data;
+          break;
+        }
+      }
+      this.dataSource = oldData;
+      this.dataSource = [...this.dataSource];
+    },
+    startSocket(data) {
+      for (let i = 0,length=data.length;i<length;i++) {
+        let equipmentIp = data[i]['equipmentIp'];
+        let gatherDataPort = data[i]['gatherDataPort'];
+        let normDataPort = data[i]['normDataPort'];
+        //equipmentIp = "192.168.0.55";
+        let url1 = "ws://" + equipmentIp + ":" + gatherDataPort;
+        let url2 = "ws://" + equipmentIp + ":" + normDataPort;
+        socket.initSocket(url1);
+        socket.initSocket(url2);
+      }
+      /*socket.initSocket("ws://192.168.0.55:50001");
+      socket.initSocket("ws://192.168.0.55:40003");*/
+      //回调函数放到window里
+      window.updateData = this.socketData;
+      console.log(data)
+    },
     /*handleFocus() {
       let myself = this;
       this.isYC = false;
@@ -157,9 +204,10 @@ export default {
               if (!("find" == type || "findOptions" == type)) {
                 myself.$message.success(response.data.msg);
               }
-              if ("find" == type) {
+              if ("find" == type || "refresh" == type) {
                 myself.dataSource = response.data.data;
                 myself.paginationOpt.total = response.data.total;
+                myself.startSocket(myself.dataSource);
               }
             } else {
               myself.$message.error(response.data.msg);
@@ -182,10 +230,10 @@ export default {
       ).catch(function (error) {
          myself.$message.error(error);
       });
-      //实时获取数据内容
-      //socket.initSocket();
+     /* //实时获取数据内容
+      socket.initSocket();
       //回调函数放到window里
-      //window.updateData = this.initData;
+      window.updateData = this.socketData;*/
   },
 };
 </script>

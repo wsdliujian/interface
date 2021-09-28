@@ -35,8 +35,8 @@ export function getUserIP() {
                             let ip = displayAddrs[i];
                             if (ip.split(".").length > 3 && ip.split(".")[0] == 192 && ip.split(".")[2] == 0) {
                                 resolve(ip);
+                                break;
                             }
-                            break;
                         }
                     }
                     function grepSDP(sdp) {

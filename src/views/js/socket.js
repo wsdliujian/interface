@@ -1,8 +1,12 @@
 
-export function initSocket () {
+export function initSocket (url) {
+    socketObj.data.nowData.linkUrl = url;
     socketObj.methods.initWebsocket('init');
 }
-let socket = null;
+export function close () {
+    socketObj.destroyed();
+}
+let socket = {};
 let flag = 0;
 let intervalObj = null;
 let socketObj =  {
@@ -10,9 +14,10 @@ let socketObj =  {
         nowData: {
             oneFish: true,
             twoFish:false,
-            fishTitle: "铁鱼信息采集",
-            linkTitle: "二回路",
-            linkUrl:"ws://192.168.0.55:9002"
+            fishTitle: "信息采集",
+            linkTitle: "接口",
+            linkUrl:"",
+            //linkUrl2:"ws://192.168.0.55:50052"
         },
         searchVal: '',
         linkBreak:false,
@@ -31,6 +36,7 @@ let socketObj =  {
             start:function () {
                 this.timeoutObj = setTimeout( function (){
                     //重连
+                    console.log("XXXX重链")
                     socketObj.methods.initWebsocket("reset");
                 },this.timeout)
             }
@@ -45,9 +51,12 @@ let socketObj =  {
             } else {
                 console.log('开始连接');
                 let socketUrl = myself.data.nowData.linkUrl;
-                socket = new WebSocket(socketUrl);
+                console.log(socketUrl)
+                let initSocket = new WebSocket(socketUrl);
+                socket[socketUrl] = initSocket;
+                console.log(socket.url)
                 //已连接
-                socket.onopen = function () {
+                socket[socketUrl].onopen = function () {
                     console.log('已连上');
                     myself.data.linkBreak = false;
                     myself.data.linkConnect = false;
@@ -55,13 +64,13 @@ let socketObj =  {
                     myself.data.heartCheck.reset().start();
                 }
                 //已断开
-                socket.onclose = function () {
+                socket[socketUrl].onclose = function () {
                     console.log('已断开');
                     //执行定时器任务
                     myself.methods.doInPerSecond();
                 }
                 //连接异常
-                socket.onerror = function () {
+                socket[socketUrl].onerror = function () {
                     console.log('连接异常');
                     if ("init" == type) {
                         myself.data.linkBreak = true;
@@ -71,9 +80,10 @@ let socketObj =  {
                     }
                 }
                 //收取消息
-                socket.onmessage = function (evt) {
+                socket[socketUrl].onmessage = function (evt) {
                     myself.data.heartCheck.reset().start();
                     console.log('收到消息');
+                    console.log(socket[socketUrl].url);
                     console.log(evt.data);
                     myself.data.linkBreak = false;
                     myself.data.linkConnect = false;
@@ -91,13 +101,15 @@ let socketObj =  {
             }
         },
         doInPerSecond() {
+            console.log("ZZZZ对面断开需刷新重连")
             if(!(socketObj.data.linkConnect)) {
-                socketObj.data.linkBreak = false;
+                //取消循环，防止重复连接
+                /*socketObj.data.linkBreak = false;
                 socketObj.data.linkConnect = true;
                 socketObj.data.linkSuccess = false;
                 socketObj.data.connectText = "尝试重连中....";
                 //3秒循环
-                intervalObj = setInterval(socketObj.methods.findReturn, 3000);
+                intervalObj = setInterval(socketObj.methods.findReturn, 3000);*/
             }
         },
         findReturn() {
@@ -112,6 +124,7 @@ let socketObj =  {
                 flag = 0;
             } else {
                 //websocket
+                console.log("XXXXYYYY重链")
                 socketObj.methods.initWebsocket("reset");
                 if (socketObj.data.linkSuccess) {
                     clearInterval(intervalObj);
@@ -120,44 +133,24 @@ let socketObj =  {
         },
         initData(jsonStr) {
             if (JSON.parse(jsonStr)) {
-                let obj = JSON.parse(jsonStr);
-                window.updateData(obj);
+                window.updateData(jsonStr);
             }
         },
-        linkResetFish() {
-            if (this.nowData.oneFish) {
-                this.nowData.oneFish = false;
-                this.nowData.twoFish = true;
-                this.nowData.fishTitle = "二回路";
-                this.nowData.linkTitle = "铁鱼信息采集";
-                //路由跳转到二回路
-                if (this.$route.path !== '/twoFish') {
-                    //获取路由对象并切换
-                    this.$router.push("twoFish")
-                }
-                this.nowData.linkUrl = "ws://219.140.94.192:30890/imserver/1002";
-                socket.close();
-                this.initWebsocket("reset");
-            } else if (this.nowData.twoFish) {
-                this.nowData.oneFish = true;
-                this.nowData.twoFish = false;
-                this.nowData.fishTitle = "铁鱼信息采集";
-                this.nowData.linkTitle = "二回路";
-                //默认界面为铁鱼信息采集，不需要路由跳转取数据
-                this.nowData.linkUrl = "ws://219.140.94.192:30890/imserver/1001";
-                socket.close();
-                this.initWebsocket("reset");
-            }
-
-        }
     },
     destroyed() {
-        socket.close();
+        let objArr = Object.values(socket);
+        for (let i = 0,length=objArr.length;i<length;i++) {
+            objArr[i].close();
+        }
     }
 }
 window.onbeforeunload = function() {
-    socket.close();
+    let objArr = Object.values(socket);
+    for (let i = 0,length=objArr.length;i<length;i++) {
+        objArr[i].close();
+    }
 }
 export default {
-    initSocket
+    initSocket,
+    close
 }
