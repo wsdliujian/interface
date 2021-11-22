@@ -13,6 +13,7 @@ Vue.use(Antd);
 Vue.prototype.$echarts = echarts
 Vue.prototype.$axios = axios
 Vue.prototype.$url = 'http://192.168.0.171:30890'
+/*Vue.prototype.$url = 'http://192.168.0.89:8085'*/
 
 new Vue({
   router,

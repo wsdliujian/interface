@@ -36,15 +36,8 @@ export default {
   background-color: #030409;
   color: #fff;
 
-  /*#dv-full-screen-container {
-    background-image: url('./img/bg.png');
-    background-size: 100% 100%;
-    box-shadow: 0 0 3px blue;
-    display: flex;
-    flex-direction: column;
-  }*/
-
   .main-header {
+    height: 100%;
     height: 80px;
     display: flex;
     justify-content: space-between;
@@ -69,6 +62,7 @@ export default {
   }
 
   .main-container {
+    height: 100%;
 
     .border-box-content {
       padding: 20px;
@@ -98,6 +92,7 @@ export default {
     }
   }
   .right-main-container {
+    height: 100%;
     width: 100%;
     padding-left: 5px;
     box-sizing: border-box;

@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 860px">
+  <div class="topScreen">
     <a-row style="min-height: 0.9rem; font-size: 0.4rem;">
       <a-col :span="1">
         <a-button type="primary" class="editable-add-btn" @click="refreshData()">
@@ -10,15 +10,15 @@
         <div title="返回应用商店" class="close" @click="closeWin"/>
       </a-col>
     </a-row>
-    <a-table  :scroll="{ y: 840,x:1200 }" bordered :data-source="dataSource" :pagination="paginationOpt" :columns="columns">
-      <template slot="equipmentStatus" slot-scope="text">
+    <a-table  class="tableSty" bordered :data-source="dataSource" :pagination="paginationOpt" :columns="columns">
+<!--      <template slot="equipmentStatus" slot-scope="text">
         <div v-if="text=='0'">
           <span style="color: #ff4d4f">未连接</span>
         </div>
         <div v-else>
           <span style="color: #096dd9">已连接</span>
         </div>
-      </template>
+      </template>-->
     </a-table>
   </div>
 </template>
@@ -84,12 +84,12 @@ export default {
           dataIndex: 'agreement',
           width: 80,
         },
-        {
+        /*{
           title: '状态',
           dataIndex: 'equipmentStatus',
           width: 80,
           scopedSlots: { customRender: 'equipmentStatus' },
-        },
+        },*/
         {
           title: '转换格式',
           dataIndex: 'transferFormat',
@@ -238,6 +238,10 @@ export default {
 };
 </script>
 <style>
+.topScreen {
+  width: 100%;
+  height: calc(100% - 20px);
+}
 .editable-add-btn {
   margin-bottom: 14px;
   margin-left: 8px;
@@ -249,5 +253,12 @@ export default {
   width:32px;
   height: 32px;
   cursor: pointer;
+}
+.tableSty {
+  text-align: left;
+  overflow: hidden;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

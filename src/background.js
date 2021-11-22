@@ -16,9 +16,9 @@ async function createWindow() {
     width: 960,
     height: 540,
     //去掉标题
-    //frame:false,
+    frame:false,
     //默认占满全屏
-    //fullscreen: true,
+    fullscreen: true,
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
